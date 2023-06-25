@@ -1,0 +1,15 @@
+.toastr-success {
+  background-color: #51a351 !important;
+}
+
+.toastr-error {
+  background-color: #bd362f !important;
+}
+
+.toastr-info {
+  background-color: #2f96b4 !important;
+}
+
+.toastr-warning {
+  background-color: #f89406 !important;
+}

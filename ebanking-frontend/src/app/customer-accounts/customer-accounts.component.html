@@ -1,0 +1,72 @@
+<div class="container mt-1">
+  <ng-container *ngIf="customer$ | async as customerInfos; else failureOrLoading">
+    <div class="container row">
+      <div class="card mt-3">
+        <div class="card-body">
+          <div class="row text-center">
+            <div class="col">
+              <label>Customer ID: </label><label><strong>{{customerInfos.id}}</strong></label>
+            </div>
+            <div class="col">
+              <label>Name: </label><label><strong>{{customerInfos.name}}</strong></label>
+            </div>
+            <div class="col">
+              <label>E-mail: </label><label><strong>{{customerInfos.email}}</strong></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-3 text-end" *ngIf="authService.hasRole('ADMIN')">
+      <button (click)="handleAddAccounts(customerInfos)" class="btn btn-primary me-2">
+        <i class="bi bi-plus"></i>
+      </button>
+    </div>
+  </ng-container>
+
+
+
+  <div class="card mt-3">
+    <div class="card-header align-items-center text-center">
+      <h3 class="mt-2">Accounts</h3>
+    </div>
+    <div class="card-body">
+      <ng-container *ngIf="accounts$ | async as accounts; else failureOrLoading">
+        <table class="table table-striped mt-3 text-center">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>TYPE</th>
+            <th>STATUS</th>
+            <th>CREATED-AT</th>
+            <th>BALANCE</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let c of accounts">
+            <td class="w-auto">{{c.id}}</td>
+            <td class="w-auto">{{c.type}}</td>
+            <td class="w-auto">{{c.status}}</td>
+            <td class="w-auto">{{ c.createdAt | date: 'dd-MM-yyyy' }}</td>
+            <td class="w-auto">{{c.balance | number: '1.2-2'}}</td>
+            <td class="w-auto">
+              <button (click)="handleDetailAccount(c.id)" class="btn btn-outline-primary me-2"><i class="bi bi-ticket-detailed"></i></button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+
+      </ng-container>
+    </div>
+  </div>
+
+
+  <ng-template #failureOrLoading>
+    <ng-container *ngIf="errorMessage; else loading">
+      <div class="text-danger">{{errorMessage}}</div>
+    </ng-container>
+    <ng-template #loading>
+      <div class="m-auto text-success">Loading...</div>
+    </ng-template>
+  </ng-template>
+</div>

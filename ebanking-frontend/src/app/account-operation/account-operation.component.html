@@ -1,0 +1,139 @@
+<div class="container mt-1">
+  <ng-container *ngIf="account | async as accountInfos; else failureOrLoading">
+    <div class="container row">
+      <ng-template #errorTemplate>
+        <ng-container *ngIf="errorMessage ; else loading">
+          <div class="text-danger text-center">{{errorMessage}}</div>
+        </ng-container>
+        <ng-template #loading>
+          Loading ...
+        </ng-template>
+      </ng-template>
+      <button (click)="handleReturn()" class="btn btn-outline-primary m-auto">Return</button>
+      <div class=" col col-md-6">
+        <div class="card">
+          <div class="card-header text-center">Account</div>
+          <div class="card-body">
+            <ng-container *ngIf="account | async as accountInfos; else errorTemplate  ">
+              <div class="mb-3">
+                <label>Account ID: </label><label><strong>  {{accountInfos.id}}</strong></label>
+              </div>
+              <div class="mb-3">
+                <label>Customer: </label><label><strong>  {{accountInfos.customerDTO.name}}</strong></label>
+              </div>
+              <div class="mb-3">
+                <label>Created
+                  : </label><label><strong>  {{accountInfos.createdAt | date: 'dd-MM-yyyy' }}</strong></label>
+              </div>
+              <div class="mb-3">
+                <label>Type: </label><label><strong> {{accountInfos.type}}</strong></label>
+              </div>
+              <div class="mb-3" *ngIf="accountInfos.type == 'SavingAccount'">
+                <label>InterestRate: </label><label><strong>  {{accountInfos.interestRate}} </strong></label>
+              </div>
+              <div class="mb-3" *ngIf="accountInfos.type == 'CurrentAccount'">
+                <label>OverDraft: </label><label><strong>  {{accountInfos.overDraft}} </strong></label>
+              </div>
+              <div class="mb-3">
+                <label>Status: </label><label><strong>  {{accountInfos.status}}  </strong></label>
+              </div>
+              <div class="mb-3">
+                <label>Balance: </label><label><strong>  {{accountInfos.balance | number: '1.2-2'}} </strong>
+                dhs</label>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <div class="col col-md-6">
+        <div class="card" *ngIf="accountDetails$">
+          <div class="card-header text-center">Perform an operation</div>
+          <div class="card-body">
+            <form [formGroup]="operationFromGroup" (ngSubmit)="handleAccountOperation()" method="post">
+              <div class="form-check form-check-inline" *ngIf="authService.hasRole('ADMIN')">
+                <input class="form-check-input" type="radio" formControlName="operationType" value="DEBIT">
+                <label class="form-check-label">DEBIT:</label>
+              </div>
+              <div class="form-check form-check-inline" *ngIf="authService.hasRole('ADMIN')">
+                <input class="form-check-input" type="radio" formControlName="operationType" value="CREDIT">
+                <label class="form-check-label">CREDIT:</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" formControlName="operationType" value="TRANSFER">
+                <label class="form-check-label">TRANSFER:</label>
+              </div>
+              <div class="mb-3" *ngIf="operationFromGroup.get('operationType')?.value === 'TRANSFER'">
+                <label class="form-label">Account Destination :</label>
+                <input type="text" formControlName="accountDestination" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Amount :</label>
+                <input type="text" formControlName="amount" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Description :</label>
+                <input type="text" formControlName="description" class="form-control">
+              </div>
+              <div class="d-grid mb-3 mt-5">
+                <button class="btn btn-success">Save Operation</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center text-center">
+        <h3 class="mt-2">Operations</h3>
+      </div>
+
+      <div class="card-body">
+
+        <ng-container *ngIf="accountDetails$ | async as details; else failureOrLoading">
+          <table class="table table-striped mt-3 text-center">
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>DATE</th>
+              <th>AMOUNT(dhs)</th>
+              <th>TYPE</th>
+              <th>DESCRIPTION</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let op of details.accountOperationDTOS">
+              <td class="w-auto">{{op.id}}</td>
+              <td class="w-auto">{{op.operationDate | date: 'dd-MM-yyyy : HH-mm-ss' }}</td>
+              <td class="w-auto">{{op.amount | number: '1.2-2'}}</td>
+              <td class="w-auto">{{op.type}}</td>
+              <td class="w-auto">{{op.description}}</td>
+              <td class="w-auto" *ngIf="authService.hasRole('ADMIN')">
+                <button (click)="handleDeleteOperation(op.id)" class="btn btn-outline-danger me-1"><i
+                  class="bi bi-trash"></i></button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <ul class="nav nav-pills d-flex justify-content-center">
+            <li *ngFor="let item of [].constructor(details.totalPages); let page = index">
+              <a [ngClass]="page==currentPage? 'btn-primary': 'btn-outline-primary'" (click)="gotoPage(page)"
+                 class="btn ms-2 me-2">{{page}}</a>
+            </li>
+          </ul>
+
+        </ng-container>
+      </div>
+    </div>
+
+
+  </ng-container>
+  <ng-template #failureOrLoading>
+    <ng-container *ngIf="errorMessage; else loading">
+      <div class="text-danger">{{errorMessage}}</div>
+    </ng-container>
+    <ng-template #loading>
+      <div class="m-auto text-success">Loading...</div>
+    </ng-template>
+  </ng-template>
+</div>

@@ -1,0 +1,24 @@
+<div class="card w-50 offset-md-3 mt-5">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h3 class="w-25 m-auto">Authentication</h3>
+  </div>
+  <div class="card-body m-3">
+    <form [formGroup]="userFormGroup" (ngSubmit)="handleLogin()">
+      <div class="row mb-3">
+        <div class="col">
+          <label class="form-label">E-mail: </label>
+          <input type="email" class="form-control" formControlName="email">
+        </div>
+        <div class="col">
+          <label class="form-label">Password: </label>
+          <input type="password" class="form-control" formControlName="password">
+        </div>
+      </div>
+      <div class="row w-25 m-auto">
+        <button [disabled]="!userFormGroup.valid" type="submit" class="btn btn-primary w-100 m-auto">Login
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="card-footer text-danger text-center" *ngIf="errorMessage">{{errorMessage}}</div>
+</div>

@@ -1,0 +1,23 @@
+<div class="container mb-5">
+  <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom border-top">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+      <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+      <span class="fs-4">E-BANKING</span>
+    </a>
+
+    <ul class="nav nav-pills me-5" *ngIf="authService.hasRole('ADMIN')">
+      <li class="nav-item border rounded">
+        <button class="nav-link btn btn-link" routerLink="/admin/customers" [class.active]="isCustomersActive()"><strong>CUSTOMERS</strong></button>
+      </li>
+      <li class="nav-item border rounded ">
+        <button class="nav-link btn btn-link" routerLink="/admin/accounts" [class.active]="isAccountsActive()"><strong>ACCOUNTS</strong></button>
+      </li>
+    </ul>
+    <ul class="nav nav-pills">
+      <a class="nav-link link-dark">{{this.authService.authenticationUser?.name}}</a>
+      <li class="nav-item border rounded ">
+        <button class="nav-link btn btn-link" (click)="handleLogout()"><strong><i class="bi bi-box-arrow-right"></i></strong></button>
+      </li>
+    </ul>
+  </header>
+</div>
